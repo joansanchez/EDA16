@@ -25,62 +25,97 @@ typedef vector<int> VE;
 typedef vector<char> Row;
 typedef vector<Row> Matrix;
 
-int bfsf(Pos pf)
+int bfsf(int xx, int yy)
 {
   Matrix visited(37, Row(37, 'F'));
   queue< pair<int, int> >  Q;
   queue<int> dQ;
-  Q.push(make_pair(pf.i, pf.j));
+  Q.push(make_pair(xx, yy));
   dQ.push(8);
-  visited[pf.i][pf.j] = 'T';
+  visited[xx][yy] = 'T';
+  bool abv1, bot1, lef1, righ1;
+  abv1 = bot1 = lef1 = righ1 = true;
   while (!Q.empty()) {
     pair<int, int> actual = Q.front();
     int x = actual.first;
     int y = actual.second;
     int dir = dQ.front();
-    //Above
+
+    //Left
     Cell cel = cell(x,y-1);
-    cerr << y-1<<endl;
-    if (y > 0 && visited[x][y-1] == 'F' && cel.type != -1) {
-      if (cel.owner != 0 and dir == 8) return 4;
-      else if (cel.owner != 0 and dir != 8) return dir;
+    if (y > 0 && visited[x][y-1] == 'F' && cel.type == 0) {
+      if (cel.owner != 0 and lef1) {
+        lef1 = false;
+        return 6;
+      }
+      else if (cel.owner != 0 and !lef1) return dir;
       Q.push(make_pair(x, (y-1)));
-      if(dir == 8)dQ.push(4);
+      if(lef1){
+        lef1 = false;
+        dQ.push(6);
+      }
       else dQ.push(dir);
       visited[x][y-1] = 'T';
     }
-    //Left
-    cel = cell(x-1,y);
-    if (x > 0 && visited[x-1][y] == 'F' && cel.type != -1) {
-      if (cel.owner != 0 and dir == 8) return 6;
-      else if (cel.owner != 0 and dir != 8) return dir;
-      Q.push(make_pair(x-1, y));
-      if(dir == 8)dQ.push(6);
-      else dQ.push(dir);
-      visited[x-1][y] = 'T';
-    }
-    //Right
-    cel = cell(x+1,y);
-    if (x < 37 - 1 && visited[x+1][y] == 'F' && cel.type != -1) {
-      if (cel.owner != 0 and dir == 8) return 2;
-      else if (cel.owner != 0 and dir != 8) return dir;
-      Q.push(make_pair(x+1, y));
-      if(dir == 8)dQ.push(2);
-      else dQ.push(dir);
-      visited[x+1][y] = 'T';
-    }
+    else lef1 = false; 
 
-    //Below
+
+    //Right
     cel = cell(x,y+1);
-    if (y < 37 - 1 && visited[x][y+1] == 'F' && cel.type != -1) {
-      if (cel.owner != 0 and dir == 8) return 0;
-      else if (cel.owner != 0 and dir != 8) return dir;
+    if (y < 37 - 1 && visited[x][y+1] == 'F' && cel.type == 0) {
+      if (cel.owner != 0 and righ1) {
+        righ1 = false;
+        return 2;
+      }
+      else if (cel.owner != 0 and !righ1) return dir;
       Q.push(make_pair(x, y+1));
-      if(dir == 8)dQ.push(0);
+      if(righ1){
+        righ1 = false;
+        dQ.push(2);
+      }
       else dQ.push(dir);
       visited[x][y+1] = 'T';
     }
-    
+    else righ1 = false;
+
+
+    //Above
+    cel = cell(x-1,y);
+    if (x > 0 && visited[x-1][y] == 'F' && cel.type == 0) {
+      if (cel.owner != 0 and abv1) {
+        abv1 = false;
+        return 4;
+      }
+      else if (cel.owner != 0 and !abv1) return dir;
+      Q.push(make_pair(x-1, y));
+      if(abv1){
+        abv1 = false;
+        dQ.push(4);
+      }
+      else dQ.push(dir);
+      visited[x-1][y] = 'T';
+    }
+    else abv1 = false;
+
+
+    //Below
+    cel = cell(x+1,y);
+    if (x < 37 - 1 && visited[x+1][y] == 'F' && cel.type == 0) {
+      if (cel.owner != 0 and bot1) {
+        bot1 = false;
+        return 0;
+      }
+      else if (cel.owner != 0 and !bot1) return dir;
+      Q.push(make_pair(x+1, y));
+      if(bot1){
+        bot1 = false;
+        dQ.push(0);
+      }
+      else dQ.push(dir);
+      visited[x+1][y] = 'T';
+    }
+    else bot1 = false;
+
     Q.pop();
     dQ.pop();
   }
@@ -95,16 +130,25 @@ int bfsf(Pos pf)
     VE f = farmers(0);
     for (int id : f) {
       Pos pos = unit(id).pos;
-      cerr<<"Soc "<< unit(id).pos << " estic a "<<pos ;
-      int direction = bfsf(pos);
+      int xx = pos.i;
+      int yy = pos.j;
+
+      cerr<<"Soc "<< unit(id).id << " estic a "<<pos ;
+      int direction = bfsf(xx, yy);
       cerr <<"direccion del bfs:"<< direction << endl; //chivato
       //if (round()%10) direction= Dir(2*random(0, 3));
       Cell c;
+      /*if(direction==0) command(id, Dir(0));
+      else if (direction==2) command(id, Dir(2));
+      else if (direction==4) command(id, Dir(4));
+      else if (direction==6) command(id, Dir(6));
+      else  command(id, Dir(8));*/
+
       if (direction==0 and !((c = cell(pos + Dir(0))).haunted) and c.id ==-1) command(id, Dir(0));
-      else if (direction==2 and !(c = cell(pos + Dir(2))).haunted and c.id ==-1) command(id, Dir(2));
-      else if (direction==4 and !(c = cell(pos + Dir(4))).haunted and c.id ==-1) command(id, Dir(4));
-      else if (direction==6 and !(c = cell(pos + Dir(6))).haunted and c.id ==-1) command(id, Dir(6));
-      else command(id, Dir(0));
+      if (direction==2 and !(c = cell(pos + Dir(2))).haunted and c.id ==-1) command(id, Dir(2));
+      if (direction==4 and !(c = cell(pos + Dir(4))).haunted and c.id ==-1) command(id, Dir(4));
+      if (direction==6 and !(c = cell(pos + Dir(6))).haunted and c.id ==-1) command(id, Dir(6));
+      if (direction==8) command(id, Dir(8));
       /*Cell c;
       if((direction == 0)  and !((c = cell(pos + Dir(0))).haunted) and c.id ==-1) {command(id, Dir(0));cerr<<"primer if c: "<< c.id<<endl;}
       else if (direction == 2 and !(c = cell(pos + Dir(2))).haunted and c.id ==-1) {command(id, Dir(2)); cerr<<"segon if c: "<< c.id<<endl;}

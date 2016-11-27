@@ -21,3 +21,5 @@ State.o: State.cc State.hh Structs.hh Utils.hh
 Structs.o: Structs.cc Structs.hh Utils.hh
 Utils.o: Utils.cc Utils.hh
 bfs.o: bfs.cc
+test.o: test.cc Player.hh Info.hh Settings.hh Structs.hh Utils.hh \
+ State.hh Action.hh Random.hh Registry.hh
