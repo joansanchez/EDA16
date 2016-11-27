@@ -15,7 +15,7 @@
 DUMMY_OBJ = AIDummy.o
 
 # Add here any extra .o player files you want to link to the executable
-EXTRA_OBJS = AINavajillas.o
+EXTRA_OBJS = AITest.o
 
 # Config
 OPTIMIZE = 2 # Optimization level (0 to 3)
