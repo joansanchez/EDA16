@@ -18,7 +18,7 @@ void distancies( Graph &G,  int xx, int yy, int maxdist)
       Q.push(make_pair(x, y-1));
       dQ.push(dist);
       visited[x][y-1] = 'T';
-      G[x][y-1] = 'R';
+      G[x][y-1] = 'X';
     }
     //Right
     cel = cell(x,y+1);
@@ -26,21 +26,21 @@ void distancies( Graph &G,  int xx, int yy, int maxdist)
       Q.push(make_pair(x, y+1));
       dQ.push(dist);
       visited[x][y+1] = 'T';
-      G[x][y+1] = 'R';
+      G[x][y+1] = 'X';
     }
     //Above
     if (x > 0 && visited[x-1][y] == 'F' && cel.type == 0 && dist <= maxdist) {
       Q.push(make_pair(x-1, y));
       dQ.push(dist);
       visited[x-1][y] = 'T';
-      G[x-1][y] = 'R';
+      G[x-1][y] = 'X';
     }
     //Right
     if (x < G.size() - 1 && visited[x+1][y] == 'F' && cel.type == 0 && dist <= maxdist) {
       Q.push(make_pair(x+1, y));
       dQ.push(dist);
       visited[x+1][y] = 'T';
-      G[x+1][y] = 'R';
+      G[x+1][y] = 'X';
     }
     Q.pop();
     dQ.pop();
