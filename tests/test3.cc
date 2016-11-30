@@ -39,7 +39,8 @@ int bfs(const Graph &G, int xx, int yy)
       else dQ.push(dir);
       visited[x][y-1] = 'T';
     }
-    else lef1 = false; 
+    else lef1 = false;
+
     //Right
     if (y < G[0].size() - 1 && visited[x][y+1] == 'F' && G[x][y+1] != 'X') {
       cout<< "Right"<<endl;
@@ -57,6 +58,7 @@ int bfs(const Graph &G, int xx, int yy)
       visited[x][y+1] = 'T';
     }
     else righ1 = false;
+
     //Above
     if (x > 0 && visited[x-1][y] == 'F' && G[x-1][y] != 'X') {
       cout<<"Above"<<endl;
@@ -74,6 +76,8 @@ int bfs(const Graph &G, int xx, int yy)
       visited[x-1][y] = 'T';
     }
     else abv1 = false;
+
+    
     //Below
     if (x < G.size() - 1 && visited[x+1][y] == 'F' && G[x+1][y] != 'X') {
       cout<<"Below"<<endl;

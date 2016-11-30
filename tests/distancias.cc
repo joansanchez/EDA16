@@ -1,4 +1,4 @@
-void distancies( Graph &G,  int xx, int yy, int maxdist)
+void distancies(Matrix &G,  int xx, int yy, int maxdist)
 {
   Graph visited(G.size(), Row(G[0].size(), 'F'));
   queue< pair<int, int> >  Q;
@@ -12,6 +12,27 @@ void distancies( Graph &G,  int xx, int yy, int maxdist)
     int y = actual.second;
     int dist = dQ.front() + 1;
     Cell cel;
+    Pos p(x, y);
+    for (int i = 0; i < 8; i += 2){
+      p += Dir(i);
+      if(y > 0 and y < G[0].size() - 1 and x > 0 and x < G.size() - 1 and visited[p.i][p.j]=='F' and cel.type == 0 and dist <= maxdist){
+        Q.push(make_pair(p.i, p.j));
+        dq(dist);
+        visited[p.i][p.j] = 'T';
+        G[p.i][p.j]='X';
+      }
+    }
+    Q.pop();
+    dQ.pop();
+  }
+}
+
+
+
+
+
+//basura
+
     //Left
     cel = cell(x,y-1);
     if (y > 0 && visited[x][y-1] == 'F' && cel.type == 0 && dist <= maxdist) {

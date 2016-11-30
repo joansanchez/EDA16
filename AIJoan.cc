@@ -5,7 +5,7 @@
  * Write the name of your player and save this file
  * with the same name and .cc extension.
  */
-#define PLAYER_NAME Joan
+#define PLAYER_NAME Test4
 
 
 struct PLAYER_NAME : public Player {
@@ -25,8 +25,8 @@ struct PLAYER_NAME : public Player {
   typedef vector<char> Row;
   typedef vector<Row> Matrix;
 
-  void distancies(Matrix &G,  int xx, int yy, int maxdist, char tipo)
-  {
+void distancies(Matrix &G,  int xx, int yy, int maxdist) //en uso
+{
   Matrix visited(G.size(), Row(G[0].size(), 'F'));
   queue< pair<int, int> >  Q;
   queue<int> dQ;
@@ -39,47 +39,26 @@ struct PLAYER_NAME : public Player {
     int y = actual.second;
     int dist = dQ.front() + 1;
     Cell cel;
-    //Left
-    cel = cell(x,y-1);
-    if (y > 0 && visited[x][y-1] == 'F' && cel.type == 0 && dist <= maxdist) {
-      Q.push(make_pair(x, y-1));
-      dQ.push(dist);
-      visited[x][y-1] = 'T';
-      if (tipo == 'W')G[x][y-1] = 'R';
-      if (tipo == 'K')G[x][y-1] = 'A';
+    Pos a(x, y);
+    for (int i = 0; i < 8; i += 2){
+      Pos p = a+ Dir(i);
+      cel = cell(p);
+      if(p.j > 0 and p.j < (int)G[0].size() - 1 and p.i > 0 and p.i < (int)G.size() - 1 and visited[p.i][p.j]=='F' and dist <= maxdist){
+        Q.push(make_pair(p.i, p.j));
+        dQ.push(dist);
+        visited[p.i][p.j] = 'T';
+        G[p.i][p.j]='X';
+      }
     }
-    //Right
-    cel = cell(x,y+1);
-    if (y < (int)G[0].size() - 1 && visited[x][y+1] == 'F' && cel.type == 0 && dist <= maxdist) {
-      Q.push(make_pair(x, y+1));
-      dQ.push(dist);
-      visited[x][y+1] = 'T';
-      if(tipo == 'W')G[x][y+1] = 'R';
-      if(tipo == 'K')G[x][y+1] = 'A';
-    }
-    //Above
-    if (x > 0 && visited[x-1][y] == 'F' && cel.type == 0 && dist <= maxdist) {
-      Q.push(make_pair(x-1, y));
-      dQ.push(dist);
-      visited[x-1][y] = 'T';
-      if(tipo == 'W')G[x-1][y] = 'R';
-      if(tipo == 'K')G[x-1][y] = 'A';
-    }
-    //Right
-    if (x < (int)G.size() - 1 && visited[x+1][y] == 'F' && cel.type == 0 && dist <= maxdist) {
-      Q.push(make_pair(x+1, y));
-      dQ.push(dist);
-      visited[x+1][y] = 'T';
-      if(tipo == 'W')G[x+1][y] = 'R';
-      if(tipo == 'K')G[x+1][y] = 'A';
-    }
+ 
     Q.pop();
     dQ.pop();
   }
 }
 
 
-  void omplir_farmers(Matrix &mf){
+
+  void omplir_farmers(Matrix &mf){ //en uso
     //bruixes
     Cell com;
     Pos pos;
@@ -91,8 +70,8 @@ struct PLAYER_NAME : public Player {
         pos = unit(id).pos;
         x = pos.i;
         y = pos.j;
-        mf[x][y] = 'W';
-        if(unit(id).active) distancies(mf, x, y, 3, 'W');
+        mf[x][y] = 'X';
+        if(unit(id).active) distancies(mf, x, y, 3);
       }
     }
 
@@ -104,26 +83,18 @@ struct PLAYER_NAME : public Player {
         pos = unit(id).pos;
         x = pos.i;
         y = pos.j;
-        mf[x][y] = 'K';
-        distancies(mf, x, y, 1, 'K');
-        if((mf[x][y-1]=='K' or mf[x][y-1]=='R') and (mf[x-1][y]=='K' or mf[x-1][y]=='R')) mf[x-1][y-1] = 'X';
-        if((mf[x][y+1]=='X' or mf[x][y+1]=='R') and (mf[x-1][y]=='X' or mf[x-1][y]=='R')) mf[x-1][y+1] = 'X';
-        if((mf[x][y-1]=='X' or mf[x][y-1]=='R') and (mf[x+1][y]=='X' or mf[x+1][y]=='R')) mf[x+1][y-1] = 'X';
-        if((mf[x][y+1]=='X' or mf[x][y+1]=='R') and (mf[x+1][y]=='X' or mf[x+1][y]=='R')) mf[x+1][y+1] = 'X';
+        mf[x][y] = 'X';
+        distancies(mf, x, y, 1);
+        if(mf[x][y-1]=='X' and mf[x-1][y]=='X') mf[x-1][y-1] = 'X';
+        if(mf[x][y+1]=='X' and mf[x-1][y]=='X') mf[x-1][y+1] = 'X';
+        if(mf[x][y-1]=='X' and mf[x+1][y]=='X') mf[x+1][y-1] = 'X';
+        if(mf[x][y+1]=='X' and mf[x+1][y]=='X') mf[x+1][y+1] = 'X';
       }
     }
 
-
-    /*for (int ii = 0; ii < (int)mf.size(); ++ii){
-      for (int jj = 0; jj < (int)mf[0].size(); ++jj){
-        if (mf[ii][jj] != 'X') cerr << "." << " ";
-        else cerr << mf[ii][jj] << " ";
-      }
-      cerr << endl;
-    } */
   }
 
-  void omplir_knights(Matrix &mk){
+  void omplir_knights(Matrix &mk){ //en uso
     Cell com;
     Pos pos;
     int x;
@@ -134,19 +105,15 @@ struct PLAYER_NAME : public Player {
         pos = unit(id).pos;
         x = pos.i;
         y = pos.j;
-        mk[x][y] = 'W';
-        if(unit(id).active) distancies(mk, x, y, 3, 'W');
+        mk[x][y] = 'X';
+        if(unit(id).active) distancies(mk, x, y, 3);
       }
-    }
+    } 
   }
 
-  bool segura(const Matrix &G, int x1, int y1){
-  if (G[x1][y1] != 'A' and G[x1][y1] != 'R') return true;
-  else return false;
-}
 
 
-  int bfsf(const Matrix &mf,int xx, int yy) //casilla vacia mas cercana
+  int bfsf(const Matrix &mf,int xx, int yy) //casilla vacia mas cercana. En uso
   {
   Matrix visited(mf.size(), Row(mf[0].size(), 'F'));
   queue< pair<int, int> >  Q;
@@ -154,102 +121,131 @@ struct PLAYER_NAME : public Player {
   Q.push(make_pair(xx, yy));
   dQ.push(8);
   visited[xx][yy] = 'T';
-  bool abv1, bot1, lef1, righ1;
-  abv1 = bot1 = lef1 = righ1 = true;
+  vector<bool> direc (4, true); //serveix per comprovar que es a primera veegada que sortim d-aquella posicio
   while (!Q.empty()) {
     pair<int, int> actual = Q.front();
     int x = actual.first;
     int y = actual.second;
     int dir = dQ.front();
     Cell cel;
-
-    //Below
-
-    cel = cell(x+1,y);
-    if (x < (int)mf.size() - 1 && segura(mf, x + 1, y) && visited[x+1][y] == 'F' && cel.type == 0 && cel.id == -1) {
-      if (cel.owner != 0 and bot1) {
-        bot1 = false;
-        return 0;
+    Pos a(x, y);
+    for (int i = 0; i < 8; i += 2){
+      Pos p = a+ Dir(i);
+      cel = cell(p);
+      if(p.j > 0 and p.j < (int)mf[0].size() - 1 and p.i > 0 and p.i < (int)mf.size() - 1 && visited[p.i][p.j] == 'F' && mf[p.i][p.j] != 'X' && cel.type == 0 && cel.id == -1) {
+        if (cel.owner != 0 and direc[i/2]) {
+        direc[i/2] = false;
+        return i;
       }
-      else if (cel.owner != 0 and !bot1) return dir;
-      Q.push(make_pair(x+1, y));
-      if(bot1){
-        bot1 = false;
-        dQ.push(0);
-      }
-      else dQ.push(dir);
-      visited[x+1][y] = 'T';
-    }
-    else bot1 = false;
-
-
-    //Right
-    cel = cell(x,y+1);
-    if (y < (int)mf[0].size() - 1 && segura(mf, x, y+1) && visited[x][y+1] == 'F' && cel.type == 0 && cel.id == -1) {
-      if (cel.owner != 0 and righ1) {
-        righ1 = false;
-        return 2;
-      }
-      else if (cel.owner != 0 and !righ1) return dir;
-      Q.push(make_pair(x, y+1));
-      if(righ1){
-        righ1 = false;
-        dQ.push(2);
+      else if (cel.owner != 0 and !direc[i/2]) return dir;
+      Q.push(make_pair(p.i, p.j));
+      if(direc[i/2]){
+        direc[i/2] = false;
+        dQ.push(i);
       }
       else dQ.push(dir);
-      visited[x][y+1] = 'T';
+      visited[p.i][p.j] = 'T';
+      }
+      else direc[i/2] = false;
     }
-    else righ1 = false;
-
-    //Left
-    cel = cell(x,y-1);
-    if (y > 0 && segura(mf, x, y-1) &&visited[x][y-1] == 'F' && cel.type == 0 && cel.id == -1) {
-      if (cel.owner != 0 and lef1) {
-        lef1 = false;
-        return 6;
-      }
-      else if (cel.owner != 0 and !lef1) return dir;
-      Q.push(make_pair(x, (y-1)));
-      if(lef1){
-        lef1 = false;
-        dQ.push(6);
-      }
-      else dQ.push(dir);
-      visited[x][y-1] = 'T';
-    }
-    else lef1 = false; 
-
-    //Above
-    cel = cell(x-1,y);
-    if (x > 0 && segura(mf, x - 1, y) && visited[x-1][y] == 'F' && cel.type == 0 && cel.id == -1) {
-      if (cel.owner != 0 and abv1) {
-        abv1 = false;
-        return 4;
-      }
-      else if (cel.owner != 0 and !abv1) return dir;
-      Q.push(make_pair(x-1, y));
-      if(abv1){
-        abv1 = false;
-        dQ.push(4);
-      }
-      else dQ.push(dir);
-      visited[x-1][y] = 'T';
-    }
-    else abv1 = false;
-    
-
-
-    Q.pop();
+     Q.pop();
     dQ.pop();
   }
+  
   //No vertexes found
   return 8;
   }
-int bfsk(const Matrix &mk,int xx, int yy) //casilla vacia mas cercana
+
+
+int bfsk(const Matrix &mk,int xx, int yy) //enemigo mas cercano
   {
-    return 8;
+  Matrix visited(mk.size(), Row(mk[0].size(), 'F'));
+  queue< pair<int, int> >  Q;
+  queue<int> dQ;
+  Q.push(make_pair(xx, yy));
+  dQ.push(8);
+  visited[xx][yy] = 'T';
+  vector<bool> direc (7, true); //serveix per comprovar que es a primera veegada que sortim d-aquella posicio
+  while (!Q.empty()) {
+    pair<int, int> actual = Q.front();
+    int x = actual.first;
+    int y = actual.second;
+    int dir = dQ.front();
+    Cell cel;
+    Pos a(x, y);
+    for (int i = 0; i < 8; ++i){
+      Pos p = a+ Dir(i);
+      cel = cell(p);
+      if(p.j > 0 and p.j < (int)mk[0].size() - 1 and p.i > 0 and p.i < (int)mk.size() - 1 && visited[p.i][p.j] == 'F' && mk[p.i][p.j] != 'X' && cel.type == Empty) {
+        if ((cel.id != -1 and (unit(cel.id).type == Farmer or unit(cel.id).type == Knight) and unit(cel.id).player != 0) and direc[i]) {
+        direc[i] = false;
+        return i;
+      }
+      else if ((cel.id != -1 and (unit(cel.id).type == Farmer or unit(cel.id).type == Knight) and unit(cel.id).player != 0) and !direc[i]) return dir;
+      Q.push(make_pair(p.i, p.j));
+      if(direc[i]){
+        direc[i] = false;
+        dQ.push(i);
+      }
+      else dQ.push(dir);
+      visited[p.i][p.j] = 'T';
+      }
+      else direc[i] = false;
+    }
+     Q.pop();
+    dQ.pop();
+  }
+  
+  //No vertexes found
+  return 8;
   }
 
+int bfsw(Matrix &mw,int xx, int yy) //casilla vacia mas cercana. En uso
+  {
+  Matrix visited(mw.size(), Row(mw[0].size(), 'F'));
+  queue< pair<int, int> >  Q;
+  queue<int> dQ;
+  Q.push(make_pair(xx, yy));
+  dQ.push(8);
+  visited[xx][yy] = 'T';
+  vector<bool> direc (4, true); //serveix per comprovar que es a primera veegada que sortim d-aquella posicio
+  while (!Q.empty()) {
+    pair<int, int> actual = Q.front();
+    int x = actual.first;
+    int y = actual.second;
+    int dir = dQ.front();
+    Cell cel;
+    Pos a(x, y);
+    for (int i = 0; i < 8; i += 2){
+      Pos p = a+ Dir(i);
+      cel = cell(p);
+      if(p.j > 0 and p.j < (int)mw[0].size() - 1 and p.i > 0 and p.i < (int)mw.size() - 1 && visited[p.i][p.j] == 'F' && mw[p.i][p.j] != 'A' && cel.type == 0) {
+        if ((cel.id != -1 and (unit(cel.id).type == Farmer or unit(cel.id).type == Knight) and unit(cel.id).player != 0) and direc[i/2]) {
+        direc[i/2] = false;
+        mw[p.i][p.j] = 'A';
+        return i;
+      }
+      else if (cel.id != -1 and (unit(cel.id).type == Farmer or unit(cel.id).type == Knight) and !direc[i/2]){ 
+        mw[p.i][p.j] = 'A';
+        return dir;
+      }
+      Q.push(make_pair(p.i, p.j));
+      if(direc[i/2]){
+        direc[i/2] = false;
+        dQ.push(i);
+      }
+      else dQ.push(dir);
+      visited[p.i][p.j] = 'T';
+      }
+      else direc[i/2] = false;
+    }
+     Q.pop();
+    dQ.pop();
+  }
+  
+  //No vertexes found
+  return 8;
+  }
 
   /**
    * Play method, invoked once per each round.
@@ -261,7 +257,8 @@ int bfsk(const Matrix &mk,int xx, int yy) //casilla vacia mas cercana
   Matrix matknights(rows(), Row(cols())); //zones on els cavallers no poden anar: bruixes
   omplir_knights(matknights);
   Matrix matwitches(rows(), Row(cols()));
-  
+  //omplir_knights(matwitches);
+
 
   //farmers
   VE f = farmers(0);
@@ -272,7 +269,7 @@ int bfsk(const Matrix &mk,int xx, int yy) //casilla vacia mas cercana
       command(id, Dir(bfsf(matfarmers, x, y)));
     }
 
-// if (round()==5)while(1){}
+ 
   //knights
     VE k = knights(0);
     for (int id : k) {
@@ -281,7 +278,20 @@ int bfsk(const Matrix &mk,int xx, int yy) //casilla vacia mas cercana
       int y = pos.j;
       command(id, Dir(bfsk(matknights, x, y)));
     }
+ 
+  //witches
+
+    if(round()<10){}
+    else{  
+    VE w = witches(0);
+    for (int id : w) {
+      Pos pos = unit(id).pos;
+      int x = pos.i;
+      int y = pos.j;
+      command(id, Dir(bfsw(matwitches, x, y)));
+    }
   }
+}
 };
 
 
