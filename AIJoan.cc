@@ -5,7 +5,7 @@
  * Write the name of your player and save this file
  * with the same name and .cc extension.
  */
-#define PLAYER_NAME Test4
+#define PLAYER_NAME Joan 
 
 
 struct PLAYER_NAME : public Player {
@@ -74,7 +74,6 @@ void distancies(Matrix &G,  int xx, int yy, int maxdist) //en uso
         if(unit(id).active) distancies(mf, x, y, 3);
       }
     }
-
 
     //Cavallers
     for(int kp = 1; kp < 4; ++kp){
@@ -219,13 +218,13 @@ int bfsw(Matrix &mw,int xx, int yy) //casilla vacia mas cercana. En uso
     for (int i = 0; i < 8; i += 2){
       Pos p = a+ Dir(i);
       cel = cell(p);
-      if(p.j > 0 and p.j < (int)mw[0].size() - 1 and p.i > 0 and p.i < (int)mw.size() - 1 && visited[p.i][p.j] == 'F' && mw[p.i][p.j] != 'A' && cel.type == 0) {
-        if ((cel.id != -1 and (unit(cel.id).type == Farmer or unit(cel.id).type == Knight) and unit(cel.id).player != 0) and direc[i/2]) {
+      if(p.j > 0 and p.j < (int)mw[0].size() - 1 and p.i > 0 and p.i < (int)mw.size() - 1 && visited[p.i][p.j] == 'F' && mw[p.i][p.j] != 'A' && cel.type == 0 && unit(cel.id).player != 0) {
+        if ((cel.id != -1 and unit(cel.id).type == Knight and unit(cel.id).player != 0) and direc[i/2]) {
         direc[i/2] = false;
         mw[p.i][p.j] = 'A';
         return i;
       }
-      else if (cel.id != -1 and (unit(cel.id).type == Farmer or unit(cel.id).type == Knight) and !direc[i/2]){ 
+      else if ((cel.id != -1 and  unit(cel.id).type == Knight and unit(cel.id).player != 0) and !direc[i/2]){ 
         mw[p.i][p.j] = 'A';
         return dir;
       }
@@ -259,7 +258,6 @@ int bfsw(Matrix &mw,int xx, int yy) //casilla vacia mas cercana. En uso
   Matrix matwitches(rows(), Row(cols()));
   //omplir_knights(matwitches);
 
-
   //farmers
   VE f = farmers(0);
     for (int id : f) {
@@ -279,10 +277,7 @@ int bfsw(Matrix &mw,int xx, int yy) //casilla vacia mas cercana. En uso
       command(id, Dir(bfsk(matknights, x, y)));
     }
  
-  //witches
-
-    if(round()<10){}
-    else{  
+  //witches 
     VE w = witches(0);
     for (int id : w) {
       Pos pos = unit(id).pos;
@@ -290,7 +285,7 @@ int bfsw(Matrix &mw,int xx, int yy) //casilla vacia mas cercana. En uso
       int y = pos.j;
       command(id, Dir(bfsw(matwitches, x, y)));
     }
-  }
+  
 }
 };
 
